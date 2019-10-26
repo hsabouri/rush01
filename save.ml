@@ -46,7 +46,11 @@ let string_of_t (a, b, c, d) =
         (string_of_int a) ^ " " ^ (string_of_int b) ^ " " ^ (string_of_int c) ^ " " ^ (string_of_int d)
 
 let writeSave t =
-        let oc = open_out "save.itama" in
-        let s = string_of_t t in
-        output oc (Bytes.of_string s) 0 (String.length s);
-        close_out oc
+        let oc = try Ok (open_out "save.itama") with Sys_error _ -> Error "save.itama: Permission denied" in
+        match oc with
+                | Error r -> print_endline r
+                | Ok x -> begin
+                        let s = string_of_t t in
+                        output x (Bytes.of_string s) 0 (String.length s);
+                        close_out x
+                end
