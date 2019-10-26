@@ -1,11 +1,20 @@
 let (>>=) = Lwt.(>>=)
 
-let pokemon_string = "
- █  █
+let pokemon_bg = "
+
 ██████
  ████
  █  █
 "
+
+let pokemon_fg = "
+ █  █
+
+
+
+"
+
+let background = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.white ; background = Some LTerm_style.white  }: LTerm_style.t)
 
 let rec loop ui coord =
 	LTerm_ui.wait ui >>= function
@@ -16,14 +25,20 @@ let rec loop ui coord =
 let draw ui matrix (coord: LTerm_geom.coord) =
 	let size = LTerm_ui.size ui in
 	let ctx = LTerm_draw.context matrix size in
-	LTerm_draw.clear ctx;
-	LTerm_draw.draw_frame_labelled ctx { row1 = 0; col1 = 0; row2 = size.rows; col2 = size.cols } ~alignment:H_align_center (Zed_string.unsafe_of_utf8 " Pikachu Tamagochi ") LTerm_draw.Light;
+	LTerm_draw.fill_style ctx background
+	; LTerm_draw.draw_frame_labelled ctx { row1 = 0; col1 = 0; row2 = size.rows; col2 = size.cols } ~alignment:H_align_center (Zed_string.unsafe_of_utf8 " Pikachu Tamagochi ") LTerm_draw.Light;
 
 	let ctx = LTerm_draw.sub ctx { row1 = 1; col1 = 1; row2 = size.rows - 1; col2 = size.cols - 1 } in
 
-	LTerm_draw.draw_styled ctx coord.row coord.col (LTerm_text.eval [
-		LTerm_text.B_fg LTerm_style.lyellow ;
-		LTerm_text.S pokemon_string ;
+	LTerm_draw.draw_styled_aligned ctx coord.row H_align_center (LTerm_text.eval [
+		LTerm_text.B_fg LTerm_style.yellow ;
+		LTerm_text.S pokemon_bg ;
+		LTerm_text.E_fg
+	])
+
+	; LTerm_draw.draw_styled_aligned ctx coord.row H_align_center (LTerm_text.eval [
+		LTerm_text.B_fg LTerm_style.black ;
+		LTerm_text.S pokemon_fg ;
 		LTerm_text.E_fg
 	])
 
