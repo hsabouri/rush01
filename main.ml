@@ -1,20 +1,37 @@
 let (>>=) = Lwt.(>>=)
 
-let pokemon_bg = "
 
-██████
- ████
- █  █
-"
-
-let pokemon_fg = "
- █  █
-
-
-
+let pika = "
+YY          YY
+  YY      YY
+  YYYYYYYYYY    BB
+  YYBBYYBBYY   YYY
+  RRYYYYYYRR  YYY
+  DDYYYYYYDDYYY
+  DDYYYYYYDD
+   YYYYYYYY
+   YY    YY
 "
 
 let background = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.white ; background = Some LTerm_style.white  }: LTerm_style.t)
+let red = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.red ; background = Some LTerm_style.white  }: LTerm_style.t)
+let black = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.black ; background = Some LTerm_style.white  }: LTerm_style.t)
+let yellow = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.yellow ; background = Some LTerm_style.white  }: LTerm_style.t)
+let dark_yellow = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some (LTerm_style.rgb 210 190 0) ; background = Some LTerm_style.white  }: LTerm_style.t)
+let ch = Zed_char.unsafe_of_utf8 "█"
+
+let draw_image ctx (size: LTerm_geom.size) img =
+	let rec loop img i x y = match i with
+		| i when i < String.length pika -> (match String.get pika i with
+			| '\n' -> loop img (i + 1) 0 (y + 1)
+			| 'R' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:red ch ; loop img (i + 1) (x + 1) y
+			| 'B' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch ; loop img (i + 1) (x + 1) y
+			| 'Y' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:yellow ch ; loop img (i + 1) (x + 1) y
+			| 'D' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:dark_yellow ch ; loop img (i + 1) (x + 1) y
+			| _ -> loop img (i + 1) (x + 1) y
+		)
+		| _ -> ()
+	in loop img 0 0 0
 
 let rec loop ui coord =
 	LTerm_ui.wait ui >>= function
@@ -30,17 +47,8 @@ let draw ui matrix (coord: LTerm_geom.coord) =
 
 	let ctx = LTerm_draw.sub ctx { row1 = 1; col1 = 1; row2 = size.rows - 1; col2 = size.cols - 1 } in
 
-	LTerm_draw.draw_styled_aligned ctx coord.row H_align_center (LTerm_text.eval [
-		LTerm_text.B_fg LTerm_style.yellow ;
-		LTerm_text.S pokemon_bg ;
-		LTerm_text.E_fg
-	])
+	draw_image ctx size pika
 
-	; LTerm_draw.draw_styled_aligned ctx coord.row H_align_center (LTerm_text.eval [
-		LTerm_text.B_fg LTerm_style.black ;
-		LTerm_text.S pokemon_fg ;
-		LTerm_text.E_fg
-	])
 
 let main () =
 	Lazy.force LTerm.stdout
