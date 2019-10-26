@@ -1,7 +1,9 @@
 RESULT = main
 SOURCES = \
-	pika.mli \
-	pika.ml \
+	pika.mli	\
+	save.mli	\
+	pika.ml		\
+	save.ml		\
 	main.ml
 
 PACKS = lambda-term
