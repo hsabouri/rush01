@@ -118,6 +118,20 @@ let pika_tired2 = "
   pp      pp
 "
 
+let pika_dead = "
+
+    b        b
+   BBB      BBB
+   BPYBbbbbBYPB
+   BYYYYYYYYYYB  BB
+   BYYYXYYXYYYBbBPB
+   BRRYYYYYYRRBYYYB
+   BYYBYYYYBYYBYBp
+ bbBYYBYYYYBYYBBb
+BYYYPPYYYYYYPPYYYB
+ pppppppppppppppp
+"
+
 let background = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.white ; background = Some LTerm_style.white  }: LTerm_style.t)
 let background_green = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.green ; background = Some LTerm_style.green  }: LTerm_style.t)
 let red = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.red ; background = Some LTerm_style.white  }: LTerm_style.t)
@@ -132,6 +146,7 @@ let ch = Zed_char.unsafe_of_utf8 "█"
 let ch_low = Zed_char.unsafe_of_utf8 "▄"
 let ch_high = Zed_char.unsafe_of_utf8 "▀"
 let ch_z = Zed_char.unsafe_of_utf8 "Z"
+let ch_x = Zed_char.unsafe_of_utf8 "X"
 
 let draw_bar ctx (size: LTerm_geom.size) color (t, name) n =
 	let rec loop i = match i with
@@ -149,6 +164,7 @@ let draw_image ctx (size: LTerm_geom.size) img =
 			| 'B' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch ; loop img (i + 1) (x + 1) y
 			| 'b' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch_low ; loop img (i + 1) (x + 1) y
 			| 'J' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:yellow_black ch_low ; loop img (i + 1) (x + 1) y
+			| 'X' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:yellow_black ch_x ; loop img (i + 1) (x + 1) y
 			| 'p' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch_high ; loop img (i + 1) (x + 1) y
 			| 'i' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:blue ch_high ; loop img (i + 1) (x + 1) y
 			| 'I' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:blue ch ; loop img (i + 1) (x + 1) y
