@@ -83,7 +83,7 @@ struct
 	let one_sec (he, en, hy, ha) = (he |-| 1, en, hy, ha)
 
 	let get_state (he, en, hy, ha) =
-		(he < 20, en < 20, hy < 20, ha < 20)
+		(he <= 20, en <= 20, hy <= 20, ha <= 20)
 
 	let render ctx size t = match get_state t with
 		| (sick, true, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika_tired (sick, dirty, sad))
