@@ -30,25 +30,20 @@ let readSave str =
         end
 
 
-let openMe av =
-        let ic = try open_in (av.(1)) with Sys_error _ -> open_in av.(0) in
+let openSave save =
+        let av = Sys.argv in
+        let ic = try open_in save with Sys_error _ -> open_in av.(0) in
         let ret = try input_line ic with End_of_file -> "" in
         close_in ic;
-        ret
-
-let openSave _ =
-        let av = Sys.argv in
-        if Array.length av <= 1 then None
-        else if av.(1) <> "save.itama" then None
-        else readSave (openMe av)
+        readSave ret
 
 let string_of_t (a, b, c, d) =
         (string_of_int a) ^ " " ^ (string_of_int b) ^ " " ^ (string_of_int c) ^ " " ^ (string_of_int d)
 
-let writeSave t =
-        let oc = try Ok (open_out "save.itama") with Sys_error _ -> Error "save.itama: Permission denied" in
+let writeSave t path =
+        let oc = try Ok (open_out path) with Sys_error _ -> Error (path ^ ": Permission denied") in
         match oc with
-                | Error r -> print_endline r
+                | Error r -> ()
                 | Ok x -> begin
                         let s = string_of_t t in
                         output x (Bytes.of_string s) 0 (String.length s);
