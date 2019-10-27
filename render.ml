@@ -178,5 +178,3 @@ let draw_image ctx (size: LTerm_geom.size) img =
 		| _ -> ()
 	in loop img 0 0 0
 
-
-let filter img = img

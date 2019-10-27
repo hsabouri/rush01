@@ -47,33 +47,43 @@ struct
 		ha
 	)
 
-	let eat (he, en, hy, ha) = (
-		he |+| 25,
-		en |-| 10,
-		hy |-| 20,
-		ha |+| 5
-	)
+	let is_dead (he, en, hy, ha) = ha = 0 || en = 0 || hy = 0 || he = 0
 
-	let thunder (he, en, hy, ha) = (
-		he |-| 20,
-		en |+| 25,
-		hy,
-		ha |-| 20
-	)
+	let eat (he, en, hy, ha) = match is_dead (he, en, hy, ha) with
+		| false -> (
+				he |+| 25,
+				en |-| 10,
+				hy |-| 20,
+				ha |+| 5
+			)
+		| true -> (he, en, hy, ha)
 
-	let bath (he, en, hy, ha) = (
-		he |-| 20,
-		en |-| 10,
-		hy |+| 25,
-		ha |+| 5
-	)
+	let thunder (he, en, hy, ha) = match is_dead (he, en, hy, ha) with
+		| false -> (
+			he |-| 20,
+			en |+| 25,
+			hy,
+			ha |-| 20
+		)
+		| true -> (he, en, hy, ha)
 
-	let kill (he, en, hy, ha) = (
-		he |-| 20,
-		en |-| 10,
-		hy,
-		ha |+| 20
-	)
+	let bath (he, en, hy, ha) = match is_dead (he, en, hy, ha) with
+		| false -> (
+			he |-| 20,
+			en |-| 10,
+			hy |+| 25,
+			ha |+| 5
+		)
+		| true -> (he, en, hy, ha)
+
+	let kill (he, en, hy, ha) = match is_dead (he, en, hy, ha) with
+		| false -> (
+			he |-| 20,
+			en |-| 10,
+			hy,
+			ha |+| 20
+		)
+		| true -> (he, en, hy, ha)
 
 	let health (he, _, _, _) = he
 	let energy (_, en, _, _) = en
@@ -83,7 +93,7 @@ struct
 	let one_sec (he, en, hy, ha) = (he |-| 1, en, hy, ha)
 
 	let get_state (he, en, hy, ha) =
-		(he <= 20, en <= 20, hy <= 20, ha <= 20, ha = 0 || en = 0 || hy = 0 || he = 0)
+		(he <= 20, en <= 20, hy <= 20, ha <= 20, is_dead (he, en, hy, ha))
 
 	let choose_image animation tired sad sick = match (animation, tired, sad, sick) with
 		| (1, false, true, _) -> Render.pika_sad
@@ -96,10 +106,10 @@ struct
 		| (_, _, _, _) -> Render.pika2
 
 	let render ctx size t animation = match get_state t with
-		| (sick, _, dirty, true, false) -> Render.draw_image ctx size (Render.filter (choose_image animation false true false))
-		| (true, _, dirty, _, false) -> Render.draw_image ctx size (Render.filter (choose_image animation false false true))
-		| (sick, true, dirty, _, false) -> Render.draw_image ctx size (Render.filter (choose_image animation true false false))
-		| (sick, tired, dirty, sad, false) -> Render.draw_image ctx size (Render.filter (choose_image animation false false false))
+		| (sick, _, dirty, true, false) -> Render.draw_image ctx size (choose_image animation false true false)
+		| (true, _, dirty, _, false) -> Render.draw_image ctx size (choose_image animation false false true)
+		| (sick, true, dirty, _, false) -> Render.draw_image ctx size (choose_image animation true false false)
+		| (sick, tired, dirty, sad, false) -> Render.draw_image ctx size (choose_image animation false false false)
 		| (_, _, _, _, true) -> Render.draw_image ctx size Render.pika_dead
 
 	class renderer (t: t ref) = object ( self )
