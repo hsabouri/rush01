@@ -68,7 +68,7 @@ let main () =
 	; ignore (Lwt_engine.on_timer 1.0 true (fun _ -> applyAction Pikatchu.one_sec pika ; pika_bar#set_text ""))
 	; let frame = new LTerm_widget.frame in
 	frame#set vbox
-	; frame#set_label ~alignment:LTerm_geom.H_align_center " personnal_space.com "
+	; frame#set_label ~alignment:LTerm_geom.H_align_center " Pikamotchi "
 	; Lazy.force LTerm.stdout >>= fun term ->
 		LTerm.enable_mouse term >>= fun () ->
 			Lwt.finalize

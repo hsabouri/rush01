@@ -114,7 +114,7 @@ struct
 		| (1, false, false, _, _) -> Render.pika2
 		| (0, true, _, _, _) -> Render.pika_tired
 		| (1, true, _, _, _) -> Render.pika_tired2
-		| (_, _, _, _, _) -> Render.pika2
+		| (_, _, _, _, _) -> Render.pika
 
 	let render ctx size t animation = match get_state t with
 		| (_, _, _, true, false) -> Render.draw_image ctx size (choose_image animation false true false false)
@@ -140,10 +140,10 @@ struct
 	end
 
 	let list_of_t (he, en, hy, ha) = [
-		(he, Zed_string.of_utf8 "HEALTH")
-		; (en, Zed_string.of_utf8 "ENERGY")
-		; (hy, Zed_string.of_utf8 "HYGIENE")
-		; (ha, Zed_string.of_utf8 "HAPPINESS")
+		(he, Zed_string.of_utf8 " HEALTH ")
+		; (en, Zed_string.of_utf8 " ENERGY ")
+		; (hy, Zed_string.of_utf8 " HYGIENE ")
+		; (ha, Zed_string.of_utf8 " HAPPINESS ")
 	]
 
 	class bar_renderer (t: t ref) = object ( self )
