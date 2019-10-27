@@ -85,6 +85,15 @@ struct
 		)
 		| true -> (he, en, hy, ha)
 
+	let dance (he, en, hy, ha) = match is_dead (he, en, hy, ha) with
+		| false -> (
+			he |+| 10,
+			en |-| 10,
+			hy |-| 10,
+			ha |+| 30
+		)
+		| true -> (he, en, hy, ha)
+
 	let health (he, _, _, _) = he
 	let energy (_, en, _, _) = en
 	let hygiene (_, _, hy, _) = hy
@@ -95,21 +104,24 @@ struct
 	let get_state (he, en, hy, ha) =
 		(he <= 20, en <= 20, hy <= 20, ha <= 20, is_dead (he, en, hy, ha))
 
-	let choose_image animation tired sad sick = match (animation, tired, sad, sick) with
-		| (1, false, true, _) -> Render.pika_sad
-		| (0, false, true, _) -> Render.pika_sad2
-		| (1, false, _, true) -> Render.pika_sick
-		| (0, false, _, true) -> Render.pika_sick2
-		| (1, false, false, _) -> Render.pika2
-		| (0, true, _, _) -> Render.pika_tired
-		| (1, true, _, _) -> Render.pika_tired2
-		| (_, _, _, _) -> Render.pika2
+	let choose_image animation tired sad dirty sick = match (animation, tired, sad, sick, dirty) with
+		| (1, false, true, _, _) -> Render.pika_sad
+		| (0, false, true, _, _) -> Render.pika_sad2
+		| (1, false, _, _, true) -> Render.pika_dirty
+		| (0, false, _, _, true) -> Render.pika_dirty2
+		| (1, false, _, true, _) -> Render.pika_sick
+		| (0, false, _, true, _) -> Render.pika_sick2
+		| (1, false, false, _, _) -> Render.pika2
+		| (0, true, _, _, _) -> Render.pika_tired
+		| (1, true, _, _, _) -> Render.pika_tired2
+		| (_, _, _, _, _) -> Render.pika2
 
 	let render ctx size t animation = match get_state t with
-		| (sick, _, dirty, true, false) -> Render.draw_image ctx size (choose_image animation false true false)
-		| (true, _, dirty, _, false) -> Render.draw_image ctx size (choose_image animation false false true)
-		| (sick, true, dirty, _, false) -> Render.draw_image ctx size (choose_image animation true false false)
-		| (sick, tired, dirty, sad, false) -> Render.draw_image ctx size (choose_image animation false false false)
+		| (_, _, _, true, false) -> Render.draw_image ctx size (choose_image animation false true false false)
+		| (true, _, _, _, false) -> Render.draw_image ctx size (choose_image animation false false false true)
+		| (_, true, _, _, false) -> Render.draw_image ctx size (choose_image animation true false false false)
+		| (_, _, true, _, false) -> Render.draw_image ctx size (choose_image animation false false true false)
+		| (_, _, _, _, false) -> Render.draw_image ctx size (choose_image animation false false false false)
 		| (_, _, _, _, true) -> Render.draw_image ctx size Render.pika_dead
 
 	class renderer (t: t ref) = object ( self )

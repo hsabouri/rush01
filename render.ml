@@ -28,6 +28,36 @@ let pika2 = "
   pp      pp
 "
 
+let pika_dirty = "
+
+  b        b
+ BBB      BBB
+ BPYBbbbbBYPB
+ BYYYYYYYYYYB  BB
+ BYYBBYYBBYYBbBPB
+ BRRYYYYYYRRBYYYB
+ BYYBYYYYBYYBYBp      b
+ BYYBYYYYBYYBp
+ BPPYYYYYYPPB   b  hh
+ BYYBppppBYYB    hHHHh
+  pp      pp    HHHHHHH
+"
+
+let pika_dirty2 = "
+
+  b        b
+ BBB      BBB
+ BPYBbbbbBYPB
+ BYYYYYYYYYYB
+ BYYBBYYBBYYB  BB
+ BRRYYYYYYRRBbBPB
+ BYYBYYYYBYYBYYYB b
+ BYYBYYYYBYYBYBp
+ BPPYYYYYYPPBp    hh  b
+ BYYBppppBYYB    hHHHh
+  pp      pp    HHHHHHH
+"
+
 let pika_sick = "
 
   b        b
@@ -142,6 +172,8 @@ let black = ({ bold = None ; underline = None ; blink = None ; reverse = None ; 
 let yellow = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.yellow ; background = Some LTerm_style.white  }: LTerm_style.t)
 let yellow_black = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.black ; background = Some LTerm_style.yellow  }: LTerm_style.t)
 let blue = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some LTerm_style.cyan ; background = Some LTerm_style.yellow  }: LTerm_style.t)
+let dirty = ({ bold = None ; underline = None ; blink = None ; reverse = None ; foreground = Some (LTerm_style.rgb 119 39 19) ; background = Some LTerm_style.white  }: LTerm_style.t)
+
 let ch = Zed_char.unsafe_of_utf8 "█"
 let ch_low = Zed_char.unsafe_of_utf8 "▄"
 let ch_high = Zed_char.unsafe_of_utf8 "▀"
@@ -164,6 +196,8 @@ let draw_image ctx (size: LTerm_geom.size) img =
 			| 'B' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch ; loop img (i + 1) (x + 1) y
 			| 'b' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch_low ; loop img (i + 1) (x + 1) y
 			| 'J' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:yellow_black ch_low ; loop img (i + 1) (x + 1) y
+			| 'h' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:dirty ch_low ; loop img (i + 1) (x + 1) y
+			| 'H' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:dirty ch ; loop img (i + 1) (x + 1) y
 			| 'X' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:yellow_black ch_x ; loop img (i + 1) (x + 1) y
 			| 'p' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:black ch_high ; loop img (i + 1) (x + 1) y
 			| 'i' -> LTerm_draw.draw_char ctx (y + 4) (x + size.cols / 2 - 8) ~style:blue ch_high ; loop img (i + 1) (x + 1) y

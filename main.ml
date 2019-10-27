@@ -37,6 +37,12 @@ let main () =
 	; hbox#add button
 	; let button = new LTerm_widget.button
 		~brackets:("[ ", " ]")
+		"DANCE"
+	in
+	button#on_click (fun _ -> applyAction Pikatchu.dance pika)
+	; hbox#add button
+	; let button = new LTerm_widget.button
+		~brackets:("[ ", " ]")
 		"KILL"
 	in
 	button#on_click (fun _ -> applyAction Pikatchu.kill pika)

@@ -17,6 +17,7 @@ sig
 	val thunder : t -> t
 	val bath : t -> t
 	val kill : t -> t
+	val dance : t -> t
 
 	val health : t -> int
 	val energy : t -> int
