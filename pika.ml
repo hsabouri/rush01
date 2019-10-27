@@ -13,6 +13,18 @@ struct
 
 		let (|+|) t i = return (t + i)
 		let (|-|) t i = return (t - i)
+
+		let translate_to t width =
+			let t = float_of_int t in
+			let width = float_of_int width in
+			int_of_float ((t /. 100.0) *. width)
+
+		let render ctx (size: LTerm_geom.size) (t, name) n =
+			let t_sized = translate_to t (size.cols) in
+			match t with
+				| t when t > 20 -> Render.draw_bar ctx size Render.green (t_sized, name) n
+				| t -> Render.draw_bar ctx size Render.red (t_sized, name) n
+
 	end
 
 	let (|+|) = Bar.(|+|)
@@ -70,4 +82,42 @@ struct
 		| (sick, true, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika_tired (sick, dirty, sad))
 		| (sick, tired, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika (sick, dirty, sad))
 
+	class renderer (t: t ref) = object ( self )
+		inherit LTerm_widget.spacing ~rows:20 () as super
+
+		val mutable style = Render.background
+
+		val t = t
+
+		method! draw ctx _focused =
+			let size: LTerm_geom.size = LTerm_draw.size ctx in
+			LTerm_draw.fill_style ctx style
+			; render ctx size !t (* personnal function that draw pixel per pixel a string with colors *)
+	end
+
+	let list_of_t (he, en, hy, ha) = [
+		(he, Zed_string.of_utf8 "HEALTH")
+		; (en, Zed_string.of_utf8 "ENERGY")
+		; (hy, Zed_string.of_utf8 "HYGIENE")
+		; (ha, Zed_string.of_utf8 "HAPPINESS")
+	]
+
+	class bar_renderer (t: t ref) = object ( self )
+		inherit LTerm_widget.spacing ~rows:10 () as super
+
+		val style = LTerm_style.none
+		val mutable connection = LTerm_draw.Light
+
+		val t = t
+
+		method! draw ctx _focused =
+			let l = list_of_t !t in
+			let size = LTerm_draw.size ctx in
+			LTerm_draw.fill_style ctx style
+			; LTerm_draw.draw_hline ctx (size.rows / 2) 0 (LTerm_draw.size ctx).cols connection
+			; let rec loop l i = match l with
+				| elem :: tail -> Bar.render ctx size elem i ; loop tail (i + 1)
+				| [] -> ()
+			in loop l 0
+	end
 end

@@ -3,6 +3,9 @@ sig
 	module Bar :
 	sig
 		type t
+
+		val return : int -> t
+
 	end
 
 	type t
@@ -21,5 +24,6 @@ sig
 
 	val one_sec : t -> t
 
-	val render : LTerm_draw.context -> LTerm_geom.size -> t -> unit
+	class renderer : t ref -> LTerm_widget.spacing
+	class bar_renderer : t ref -> LTerm_widget.spacing
 end

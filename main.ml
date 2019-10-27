@@ -1,14 +1,17 @@
 let (>>=) = Lwt.(>>=)
 
+module Pikatchu = Pika.Pika
+
 let main () =
+	let pika = ref (Pikatchu.return (100, 100, 100, 100)) in
 	let waiter, wakener = Lwt.wait () in
 
 	let vbox = new LTerm_widget.vbox in
 
-	let pika = new LTerm_widget.label Render.pika_tired in
-	vbox#add pika
-	; let spacer = new LTerm_widget.spacing ~rows:10 () in
-	vbox#add spacer
+	let pika_renderer = new Pikatchu.renderer pika in
+	vbox#add pika_renderer
+
+	; vbox#add (new Pikatchu.bar_renderer pika)
 
 	; let hbox = new LTerm_widget.hbox in
 	let button = new LTerm_widget.button
@@ -34,6 +37,7 @@ let main () =
 		"KILL"
 	in
 	button#on_click (fun _ -> ())
+
 	; hbox#add button
 	; vbox#add hbox
 
