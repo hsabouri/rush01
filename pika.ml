@@ -83,11 +83,23 @@ struct
 	let one_sec (he, en, hy, ha) = (he |-| 1, en, hy, ha)
 
 	let get_state (he, en, hy, ha) =
-		(he < 20, en < 20, hy < 20, ha < 20)
+		(he <= 20, en <= 20, hy <= 20, ha <= 20)
 
-	let render ctx size t = match get_state t with
-		| (sick, true, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika_tired (sick, dirty, sad))
-		| (sick, tired, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika (sick, dirty, sad))
+	let choose_image animation tired sad sick = match (animation, tired, sad, sick) with
+		| (1, false, true, _) -> Render.pika_sad
+		| (0, false, true, _) -> Render.pika_sad2
+		| (1, false, _, true) -> Render.pika_sick
+		| (0, false, _, true) -> Render.pika_sick2
+		| (1, false, false, _) -> Render.pika2
+		| (0, true, _, _) -> Render.pika_tired
+		| (1, true, _, _) -> Render.pika_tired2
+		| _ -> Render.pika
+
+	let render ctx size t animation = match get_state t with
+		| (sick, _, dirty, true) -> Render.draw_image ctx size (Render.filter (choose_image animation false true false))
+		| (true, _, dirty, _) -> Render.draw_image ctx size (Render.filter (choose_image animation false false true))
+		| (sick, true, dirty, _) -> Render.draw_image ctx size (Render.filter (choose_image animation true false false))
+		| (sick, tired, dirty, sad) -> Render.draw_image ctx size (Render.filter (choose_image animation false false false))
 
 	class renderer (t: t ref) = object ( self )
 		inherit LTerm_widget.spacing ~rows:15 () as super
@@ -95,11 +107,13 @@ struct
 		val mutable style = Render.background
 
 		val t = t
+		val mutable animation = 0
 
 		method! draw ctx _focused =
 			let size: LTerm_geom.size = LTerm_draw.size ctx in
 			LTerm_draw.fill_style ctx style
-			; render ctx size !t (* personnal function that draw pixel per pixel a string with colors *)
+			; render ctx size !t animation (* personnal function that draw pixel per pixel a string with colors *)
+			; animation <- if animation = 0 then 1 else 0
 	end
 
 	let list_of_t (he, en, hy, ha) = [
