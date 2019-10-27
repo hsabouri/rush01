@@ -40,6 +40,13 @@ struct
 		Bar.return ha
 	)
 
+	let raw (he, en, hy, ha) : (int * int * int * int) = (
+		he,
+		en,
+		hy,
+		ha
+	)
+
 	let eat (he, en, hy, ha) = (
 		he |+| 25,
 		en |-| 10,
@@ -83,7 +90,7 @@ struct
 		| (sick, tired, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika (sick, dirty, sad))
 
 	class renderer (t: t ref) = object ( self )
-		inherit LTerm_widget.spacing ~rows:20 () as super
+		inherit LTerm_widget.spacing ~rows:15 () as super
 
 		val mutable style = Render.background
 
@@ -103,7 +110,7 @@ struct
 	]
 
 	class bar_renderer (t: t ref) = object ( self )
-		inherit LTerm_widget.spacing ~rows:10 () as super
+		inherit LTerm_widget.label "" as super
 
 		val style = LTerm_style.none
 		val mutable connection = LTerm_draw.Light
@@ -114,7 +121,6 @@ struct
 			let l = list_of_t !t in
 			let size = LTerm_draw.size ctx in
 			LTerm_draw.fill_style ctx style
-			; LTerm_draw.draw_hline ctx (size.rows / 2) 0 (LTerm_draw.size ctx).cols connection
 			; let rec loop l i = match l with
 				| elem :: tail -> Bar.render ctx size elem i ; loop tail (i + 1)
 				| [] -> ()

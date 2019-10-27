@@ -32,11 +32,11 @@ let ch_z = Zed_char.unsafe_of_utf8 "Z"
 
 let draw_bar ctx (size: LTerm_geom.size) color (t, name) n =
 	let rec loop i = match i with
-		| i when i < (LTerm_draw.size ctx).cols - 1 && i < t -> LTerm_draw.draw_char ctx (size.rows / 2 + n * 2 + 1) i ~style:color ch ; loop (i + 1)
+		| i when i < (LTerm_draw.size ctx).cols - 1 && i < t -> LTerm_draw.draw_char ctx (size.rows / 2 + n * 2 - 3) i ~style:color ch ; loop (i + 1)
 		| _ -> ()
 	in loop 1
-    ; LTerm_draw.draw_hline ctx (size.rows / 2 + n * 2 + 2) 0 ((LTerm_draw.size ctx).cols) LTerm_draw.Light
-    ; LTerm_draw.draw_string_aligned ctx (size.rows / 2 + n * 2 + 1) LTerm_geom.H_align_center ~style:black name
+    ; LTerm_draw.draw_hline ctx (size.rows / 2 + n * 2 - 2) 0 ((LTerm_draw.size ctx).cols) LTerm_draw.Light
+    ; LTerm_draw.draw_string_aligned ctx (size.rows / 2 + n * 2 - 3) LTerm_geom.H_align_center ~style:black name
 
 let draw_image ctx (size: LTerm_geom.size) img =
 	let rec loop img i x y = match i with
