@@ -19,8 +19,9 @@ struct
 	let (|-|) = Bar.(|-|)
 
 	type t = Bar.t * Bar.t * Bar.t * Bar.t
+	type state = bool * bool * bool * bool
 
-	let return (he, en, hy, ha) = (
+	let return (he, en, hy, ha) : t = (
 		Bar.return he,
 		Bar.return en,
 		Bar.return hy,
@@ -61,5 +62,12 @@ struct
 	let happiness (_, _, _, ha) = ha
 
 	let one_sec (he, en, hy, ha) = (he |-| 1, en, hy, ha)
+
+	let get_state (he, en, hy, ha) =
+		(he < 20, en < 20, hy < 20, ha < 20)
+
+	let render ctx size t = match get_state t with
+		| (sick, true, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika_tired (sick, dirty, sad))
+		| (sick, tired, dirty, sad) -> Render.draw_image ctx size (Render.filter Render.pika (sick, dirty, sad))
 
 end

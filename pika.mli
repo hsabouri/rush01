@@ -20,4 +20,6 @@ sig
 	val happiness : t -> int
 
 	val one_sec : t -> t
+
+	val render : LTerm_draw.context -> LTerm_geom.size -> t -> unit
 end

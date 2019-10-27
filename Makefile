@@ -1,8 +1,9 @@
 RESULT = main
 SOURCES = \
+	render.ml	\
 	pika.mli	\
-	save.mli	\
 	pika.ml		\
+	save.mli	\
 	save.ml		\
 	main.ml
 
