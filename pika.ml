@@ -28,6 +28,13 @@ struct
 		Bar.return ha
 	)
 
+        let raw (he, en, hy, ha) : (int * int * int * int) = (
+                he,
+                en,
+                hy,
+                ha
+        )
+
 	let eat (he, en, hy, ha) = (
 		he |+| 25,
 		en |-| 10,

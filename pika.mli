@@ -8,6 +8,7 @@ sig
 	type t
 
 	val return : int * int * int * int -> t
+        val raw : t -> int * int * int * int
 
 	val eat : t -> t
 	val thunder : t -> t

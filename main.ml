@@ -1,6 +1,15 @@
+module Pikatchu = Pika.Pika
+
 let (>>=) = Lwt.(>>=)
 
+let applyAction f pika = pika := f !pika
+
 let main () =
+        let stats = (match Save.openSave() with
+                | Some x -> x
+                | None -> (100, 100, 100, 100)
+        ) in
+        let animal = ref (Pikatchu.return stats) in
 	let waiter, wakener = Lwt.wait () in
 
 	let vbox = new LTerm_widget.vbox in
@@ -15,30 +24,36 @@ let main () =
 		~brackets:("[ ", " ]")
 		"EAT"
 	in
-	button#on_click (fun _ -> ())
+        button#on_click (fun _ -> applyAction Pikatchu.eat animal)
 	; hbox#add button
 	; let button = new LTerm_widget.button
 		~brackets:("[ ", " ]")
 		"THUNDER"
 	in
-	button#on_click (fun _ -> ())
+	button#on_click (fun _ -> applyAction Pikatchu.thunder animal)
 	; hbox#add button
 	; let button = new LTerm_widget.button
 		~brackets:("[ ", " ]")
 		"BATH"
 	in
-	button#on_click (fun _ -> ())
+	button#on_click (fun _ -> applyAction Pikatchu.bath animal)
 	; hbox#add button
 	; let button = new LTerm_widget.button
 		~brackets:("[ ", " ]")
 		"KILL"
 	in
-	button#on_click (fun _ -> ())
+	button#on_click (fun _ -> applyAction Pikatchu.kill animal)
 	; hbox#add button
 	; vbox#add hbox
 
 	; let hbox = new LTerm_widget.hbox in
 	let button = new LTerm_widget.button
+		~brackets:("[ ", " ]")
+		"save"
+	in
+	button#on_click (fun _ -> Save.writeSave (Pikatchu.raw !animal))
+	; hbox#add button
+        ; let button = new LTerm_widget.button
 		~brackets:("[ ", " ]")
 		"exit"
 	in
